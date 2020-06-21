@@ -6,6 +6,12 @@
 
 Let the cute devil girls dance on the screen! :)
 
+실행이 안되면 다음 링크에서 .NET Core 3.1 Runtime을 설치해 주세요
+
+If you cannot run this cute program, please download and install .NET Core 3.1 Runtime with below link.
+
+[32bit Download](https://download.visualstudio.microsoft.com/download/pr/77b944fa-aa83-4101-85a9-9d3bde200ebc/f0f0e2a3544593b19df8471cbe9b6b61/dotnet-sdk-3.1.301-win-x86.exe)  [64bit Download](https://download.visualstudio.microsoft.com/download/pr/4e88f517-196e-4b17-a40c-2692c689661d/eed3f5fca28262f764d8b650585a7278/dotnet-sdk-3.1.301-win-x64.exe)
+
 ---
 
 사용 언어 : C# (WPF with .NET Core)
