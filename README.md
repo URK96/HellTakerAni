@@ -34,3 +34,10 @@ Write github issue
 Contact (Discord) : URK96#5796
 
 Contact (E-mail) : chlwlsgur96@hotmail.com
+
+
+
+
+
+
+Thanks [Developer LaLa](https://www.youtube.com/channel/UCjWnBKjlXv550KDiBjtW8vQ)
