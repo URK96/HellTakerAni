@@ -1,0 +1,39 @@
+﻿<Window x:Class="HellTakerAni.Info"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HellTakerAni"
+        mc:Ignorable="d"
+        Title="Info" Height="600" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" HorizontalAlignment="Center" HorizontalContentAlignment="Center">
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF5D0A0A"/>
+                <GradientStop Color="White" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Label Content="HellTakerAni" HorizontalAlignment="Left" Margin="290,93,0,0" VerticalAlignment="Top" FontSize="36"/>
+        <Label Content="v1.1" HorizontalAlignment="Center" Margin="0,153,0,0" VerticalAlignment="Top" FontSize="16" RenderTransformOrigin="0.385,0.417"/>
+        <Label Content="Programmer : URK96" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="20" Margin="0,239,0,0"/>
+        <Label Content="Special Thanks : Developer LaLa" HorizontalAlignment="Center" Margin="0,276,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Label Content="This program is freeware. No License." HorizontalAlignment="Left" Margin="289,509,0,0" VerticalAlignment="Top"/>
+        <Label Content="Music" HorizontalAlignment="Left" Margin="368,335,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <TextBlock HorizontalAlignment="Left" Margin="379,384,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="https://www.youtube.com/watch?v=EnDXGQmCz3U" RequestNavigate="Hyperlink_RequestNavigate">
+                Vitality
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Center" Margin="0,418,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="https://www.youtube.com/watch?v=x6kGfw4cK7Y" RequestNavigate="Hyperlink_RequestNavigate">
+                Vitality VIP Edit
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Center" Margin="0,454,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="https://www.youtube.com/watch?v=qDrzzbBFHvI" RequestNavigate="Hyperlink_RequestNavigate">
+                Vitality SayMaxWell Remix
+            </Hyperlink>
+        </TextBlock>
+
+    </Grid>
+</Window>

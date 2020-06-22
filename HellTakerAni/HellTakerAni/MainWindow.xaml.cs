@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -16,11 +18,18 @@ namespace HellTakerAni
     /// </summary>
     public partial class MainWindow : Window
     {
+        enum MusicState { Stop, Play, Pause }
+
+        MusicState mState = MusicState.Stop;
+
         Bitmap original;
         Bitmap[] frames = new Bitmap[12];
         ImageSource[] imgFrame = new ImageSource[12];
 
+        MediaPlayer musicPlayer;
+
         string bitmapPath = "Resources/Cerberus.png";
+        string musicPath = "Resources/Vitality.mp3";
         string[] imageList =
         {
             "Azazel",
@@ -34,7 +43,14 @@ namespace HellTakerAni
             "Pandemonica",
             "Zdrada"
         };
+        string[] musicList =
+        {
+            "Vitality",
+            "Vitality_VIP",
+            "Vitality_SayMaxWell_Remix"
+        };
         int frame = -1;
+        bool isRepeat = true;
 
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -48,11 +64,58 @@ namespace HellTakerAni
 
             var timer = new DispatcherTimer();
 
-            timer.Interval = TimeSpan.FromSeconds(0.0167 * 3);
+            timer.Interval = TimeSpan.FromSeconds(0.0167 * 3.7);
             timer.Tick += ChangeNextFrame;
             timer.Start();
 
-            MouseDown += MoveAniBox;
+            MouseDown += (sender, e) =>
+            {
+                switch (e.ChangedButton)
+                {
+                    case MouseButton.Left:
+                        DragMove();
+                        break;
+                    case MouseButton.Right:
+                        musicPlayer.Stop();
+                        mState = MusicState.Stop;
+                        break;
+                }
+            };
+            MouseDoubleClick += (sender, e) =>
+            {
+                if (e.ChangedButton == MouseButton.Left)
+                {
+                    switch (mState)
+                    {
+                        case MusicState.Play:
+                            musicPlayer.Pause();
+                            mState = MusicState.Pause;
+                            break;
+                        case MusicState.Pause:
+                        case MusicState.Stop:
+                            if (musicPlayer.Source != null)
+                            {
+                                musicPlayer.Play();
+                                mState = MusicState.Play;
+                            }
+                            break;
+                    }
+                }
+            };
+
+            musicPlayer = new MediaPlayer();
+            musicPlayer.MediaEnded += delegate
+            {
+                if (isRepeat)
+                {
+                    musicPlayer.Position = TimeSpan.Zero;
+                    musicPlayer.Play();
+                }
+                else
+                {
+                    mState = MusicState.Stop;
+                }
+            };
         }
 
         void CreateTray()
@@ -62,6 +125,16 @@ namespace HellTakerAni
                 Text = "Exit"
             };
             exitItem.Click += delegate { System.Windows.Application.Current.Shutdown(); };
+
+            var infoItem = new ToolStripMenuItem()
+            {
+                Text = "Info"
+            };
+            infoItem.Click += delegate
+            {
+                var infoWindow = new Info();
+                infoWindow.Show();
+            };
 
             var toggleAlwaysOnTop = new ToolStripMenuItem()
             {
@@ -75,6 +148,19 @@ namespace HellTakerAni
                 Topmost = item.Checked;
             };
             toggleAlwaysOnTop.Checked = true;
+
+            var toggleMusicRepeat = new ToolStripMenuItem()
+            {
+                Text = "Repeat Music"
+            };
+            toggleMusicRepeat.Click += (sender, e) =>
+            {
+                var item = sender as ToolStripMenuItem;
+
+                item.Checked = !item.Checked;
+                isRepeat = item.Checked;
+            };
+            toggleMusicRepeat.Checked = isRepeat;
 
             var selectCharacter = new ToolStripMenuItem()
             {
@@ -100,10 +186,43 @@ namespace HellTakerAni
 
             selectCharacter.DropDownItems[0].PerformClick();
 
+            var selectMusic = new ToolStripMenuItem()
+            {
+                Text = "Music"
+            };
+
+            foreach (string s in musicList)
+            {
+                var item = new ToolStripMenuItem()
+                {
+                    Text = s
+                };
+                item.Click += (sender, e) =>
+                {
+                    var item = sender as ToolStripMenuItem;
+                    musicPath = $"Resources/{item.Text}.mp3";
+
+                    musicPlayer.Open(new Uri(musicPath, UriKind.Relative));
+                    musicPlayer.Play();
+                    mState = MusicState.Play;
+                };
+
+                selectMusic.DropDownItems.Add(item);
+            }
+
             var menuStrip = new ContextMenuStrip();
-            menuStrip.Items.Add(exitItem);
-            menuStrip.Items.Add(toggleAlwaysOnTop);
+            
             menuStrip.Items.Add(selectCharacter);
+            menuStrip.Items.Add(selectMusic);
+            menuStrip.Items.Add(new ToolStripSeparator());
+            menuStrip.Items.Add(toggleAlwaysOnTop);
+            menuStrip.Items.Add(toggleMusicRepeat);
+            menuStrip.Items.Add(new ToolStripSeparator());
+            menuStrip.Items.Add(infoItem);
+            menuStrip.Items.Add(exitItem);
+
+
+            // Create tray icon
 
             var tray = new NotifyIcon()
             {
@@ -142,10 +261,7 @@ namespace HellTakerAni
 
         private void MoveAniBox(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                DragMove();
-            }
+            
         }
 
         private void ChangeNextFrame(object sender, EventArgs e)

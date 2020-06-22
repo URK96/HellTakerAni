@@ -24,6 +24,7 @@ Use language : C# (WPF with .NET Core)
 
 - 10명의 악마 소녀들 (Ten Devil Girls)
 - 항상 위에 표시되는 악마 소녀들 (Always appear above)
+- 중독성 있는 노래들 (Addictive Songs)
 
 
 # 버그 제보 (Report bug)
