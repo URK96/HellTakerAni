@@ -10,7 +10,7 @@
         AllowsTransparency="True"
         Background="Transparent"
         ShowInTaskbar="False" Loaded="Window_Loaded"
-        Topmost="True" WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Topmost="True" WindowStartupLocation="Manual" ResizeMode="NoResize"
         >
     <Grid>
         <Image x:Name="aniBox"/>

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+
+using System;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -28,6 +29,8 @@ namespace HellTakerAni
 
         MediaPlayer musicPlayer;
 
+        RegistryKey startProgramKey;
+
         string bitmapPath = "Resources/Cerberus.png";
         string musicPath = "Resources/Vitality.mp3";
         string[] imageList =
@@ -49,6 +52,14 @@ namespace HellTakerAni
             "Vitality_VIP",
             "Vitality_SayMaxWell_Remix"
         };
+        string[] sizeList =
+        {
+            "50x50",
+            "75x75",
+            "100x100",
+            "125x125",
+            "150x150"
+        };
         int frame = -1;
         bool isRepeat = true;
 
@@ -58,7 +69,11 @@ namespace HellTakerAni
 
         public MainWindow()
         {
+            SetStartPosition();
+
             InitializeComponent();
+
+            startProgramKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
 
             CreateTray();
 
@@ -74,6 +89,11 @@ namespace HellTakerAni
                 {
                     case MouseButton.Left:
                         DragMove();
+
+                        Properties.HTASetting.Default.StartPositionX = Left;
+                        Properties.HTASetting.Default.StartPositionY = Top;
+
+                        Properties.HTASetting.Default.Save();
                         break;
                     case MouseButton.Right:
                         musicPlayer.Stop();
@@ -120,6 +140,8 @@ namespace HellTakerAni
 
         void CreateTray()
         {
+            // Program Item
+
             var exitItem = new ToolStripMenuItem()
             {
                 Text = "Exit"
@@ -135,6 +157,30 @@ namespace HellTakerAni
                 var infoWindow = new Info();
                 infoWindow.Show();
             };
+
+
+            // Util Item
+
+            var toggleStartUp = new ToolStripMenuItem()
+            {
+                Text = "Run At Startup"
+            };
+            toggleStartUp.Click += (sender, e) =>
+            {
+                var item = sender as ToolStripMenuItem;
+
+                item.Checked = !item.Checked;
+                
+                if (item.Checked)
+                {
+                    startProgramKey.SetValue("HellTakerAni", Path.Combine(Environment.CurrentDirectory, $"{AppDomain.CurrentDomain.FriendlyName}.exe"));
+                }
+                else
+                {
+                    startProgramKey.DeleteValue("HellTakerAni");
+                }
+            };
+            toggleStartUp.Checked = startProgramKey.GetValue("HellTakerAni") != null;
 
             var toggleAlwaysOnTop = new ToolStripMenuItem()
             {
@@ -162,20 +208,29 @@ namespace HellTakerAni
             };
             toggleMusicRepeat.Checked = isRepeat;
 
+
+            // Display & Audio Item
+
             var selectCharacter = new ToolStripMenuItem()
             {
                 Text = "Character"
             };
             
-            foreach (string s in imageList)
+            for (int i = 0; i < imageList.Length; ++i)
             {
                 var item = new ToolStripMenuItem()
                 {
-                    Text = s
+                    Text = imageList[i],
+                    Tag = i
                 };
                 item.Click += (sender, e) =>
                 {
                     var item = sender as ToolStripMenuItem;
+
+                    Properties.HTASetting.Default.CharacterIndex = (int)item.Tag;
+
+                    Properties.HTASetting.Default.Save();
+
                     bitmapPath = $"Resources/{item.Text}.png";
 
                     CreateAnimationList();
@@ -184,7 +239,38 @@ namespace HellTakerAni
                 selectCharacter.DropDownItems.Add(item);
             }
 
-            selectCharacter.DropDownItems[0].PerformClick();
+            selectCharacter.DropDownItems[Properties.HTASetting.Default.CharacterIndex].PerformClick();
+
+            var selectSize = new ToolStripMenuItem()
+            {
+                Text = "Character"
+            };
+
+            for (int i = 0; i < sizeList.Length; ++i)
+            {
+                var item = new ToolStripMenuItem()
+                {
+                    Text = sizeList[i],
+                    Tag = i
+                };
+                item.Click += (sender, e) =>
+                {
+                    var item = sender as ToolStripMenuItem;
+                    int index = (int)item.Tag;
+                    int size = 50 + 25 * index;
+
+                    Width = Height = size;
+
+                    Properties.HTASetting.Default.SizeIndex = index;
+                    Properties.HTASetting.Default.WindowWidth = Properties.HTASetting.Default.WindowHeight = size;
+
+                    Properties.HTASetting.Default.Save();
+                };
+
+                selectSize.DropDownItems.Add(item);
+            }
+
+            selectSize.DropDownItems[Properties.HTASetting.Default.SizeIndex].PerformClick();
 
             var selectMusic = new ToolStripMenuItem()
             {
@@ -210,11 +296,16 @@ namespace HellTakerAni
                 selectMusic.DropDownItems.Add(item);
             }
 
+
+            // Add menu items
+
             var menuStrip = new ContextMenuStrip();
             
             menuStrip.Items.Add(selectCharacter);
+            menuStrip.Items.Add(selectSize);
             menuStrip.Items.Add(selectMusic);
             menuStrip.Items.Add(new ToolStripSeparator());
+            menuStrip.Items.Add(toggleStartUp);
             menuStrip.Items.Add(toggleAlwaysOnTop);
             menuStrip.Items.Add(toggleMusicRepeat);
             menuStrip.Items.Add(new ToolStripSeparator());
@@ -259,9 +350,23 @@ namespace HellTakerAni
             }
         }
 
-        private void MoveAniBox(object sender, MouseButtonEventArgs e)
+        private void SetStartPosition()
         {
-            
+            double x = Properties.HTASetting.Default.StartPositionX;
+            double y = Properties.HTASetting.Default.StartPositionY;
+
+            if ((x == -1) || (y == -1))
+            {
+                Properties.HTASetting.Default.StartPositionX = Left;
+                Properties.HTASetting.Default.StartPositionY = Top;
+
+                Properties.HTASetting.Default.Save();
+            }
+            else
+            {
+                Left = x;
+                Top = y;
+            }
         }
 
         private void ChangeNextFrame(object sender, EventArgs e)
