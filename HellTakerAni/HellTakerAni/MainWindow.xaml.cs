@@ -4,6 +4,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -30,6 +31,8 @@ namespace HellTakerAni
         MediaPlayer musicPlayer;
 
         RegistryKey startProgramKey;
+
+        System.Timers.Timer resizeTimer;
 
         string bitmapPath = "Resources/Cerberus.png";
         string musicPath = "Resources/Vitality.mp3";
@@ -69,7 +72,7 @@ namespace HellTakerAni
 
         public MainWindow()
         {
-            SetStartPosition();
+            SetStartPositionSize();
 
             InitializeComponent();
 
@@ -77,9 +80,12 @@ namespace HellTakerAni
 
             CreateTray();
 
+            resizeTimer = new System.Timers.Timer(1000);
+            resizeTimer.Elapsed += delegate { ResizeMode = ResizeMode.NoResize; };
+
             var timer = new DispatcherTimer();
 
-            timer.Interval = TimeSpan.FromSeconds(0.0167 * 3.7);
+            timer.Interval = TimeSpan.FromMilliseconds(16.7 * 3.5);
             timer.Tick += ChangeNextFrame;
             timer.Start();
 
@@ -158,6 +164,15 @@ namespace HellTakerAni
                 infoWindow.Show();
             };
 
+            var tipItem = new ToolStripMenuItem()
+            {
+                Text = "Tip"
+            };
+            tipItem.Click += delegate
+            {
+                System.Windows.MessageBox.Show(Properties.Resources.TipMessage, "HellTakerAni Tip", MessageBoxButton.OK);
+            };
+
 
             // Util Item
 
@@ -227,13 +242,19 @@ namespace HellTakerAni
                 {
                     var item = sender as ToolStripMenuItem;
 
+                    bitmapPath = $"Resources/{item.Text}.png";
                     Properties.HTASetting.Default.CharacterIndex = (int)item.Tag;
 
                     Properties.HTASetting.Default.Save();
 
-                    bitmapPath = $"Resources/{item.Text}.png";
-
                     CreateAnimationList();
+
+                    foreach (ToolStripMenuItem menu in selectCharacter.DropDownItems)
+                    {
+                        menu.Checked = false;
+                    }
+
+                    item.Checked = true;
                 };
 
                 selectCharacter.DropDownItems.Add(item);
@@ -243,7 +264,7 @@ namespace HellTakerAni
 
             var selectSize = new ToolStripMenuItem()
             {
-                Text = "Character"
+                Text = "Preset Size"
             };
 
             for (int i = 0; i < sizeList.Length; ++i)
@@ -261,7 +282,6 @@ namespace HellTakerAni
 
                     Width = Height = size;
 
-                    Properties.HTASetting.Default.SizeIndex = index;
                     Properties.HTASetting.Default.WindowWidth = Properties.HTASetting.Default.WindowHeight = size;
 
                     Properties.HTASetting.Default.Save();
@@ -269,8 +289,6 @@ namespace HellTakerAni
 
                 selectSize.DropDownItems.Add(item);
             }
-
-            selectSize.DropDownItems[Properties.HTASetting.Default.SizeIndex].PerformClick();
 
             var selectMusic = new ToolStripMenuItem()
             {
@@ -310,6 +328,7 @@ namespace HellTakerAni
             menuStrip.Items.Add(toggleMusicRepeat);
             menuStrip.Items.Add(new ToolStripSeparator());
             menuStrip.Items.Add(infoItem);
+            menuStrip.Items.Add(tipItem);
             menuStrip.Items.Add(exitItem);
 
 
@@ -350,7 +369,7 @@ namespace HellTakerAni
             }
         }
 
-        private void SetStartPosition()
+        private void SetStartPositionSize()
         {
             double x = Properties.HTASetting.Default.StartPositionX;
             double y = Properties.HTASetting.Default.StartPositionY;
@@ -367,6 +386,9 @@ namespace HellTakerAni
                 Left = x;
                 Top = y;
             }
+
+            Width = Properties.HTASetting.Default.WindowWidth;
+            Height = Properties.HTASetting.Default.WindowHeight;
         }
 
         private void ChangeNextFrame(object sender, EventArgs e)
@@ -448,6 +470,28 @@ namespace HellTakerAni
 
             exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
             SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
+        }
+
+        private async void Window_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            await Task.Delay(100);
+
+            ResizeMode = ResizeMode.CanResizeWithGrip;
+        }
+
+        private async void Window_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            await Task.Delay(2000);
+
+            ResizeMode = ResizeMode.NoResize;
+        }
+
+        private void HTAWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Properties.HTASetting.Default.WindowWidth = e.NewSize.Width;
+            Properties.HTASetting.Default.WindowHeight = e.NewSize.Height;
+
+            Properties.HTASetting.Default.Save();
         }
     }
 }

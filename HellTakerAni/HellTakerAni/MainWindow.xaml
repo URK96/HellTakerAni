@@ -1,17 +1,17 @@
 ﻿<Window x:Class="HellTakerAni.MainWindow"
+        x:Name="HTAWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HellTakerAni"
         mc:Ignorable="d"
-        Title="HellTakerAni" Height="100" Width="100"
+        Title="HellTakerAni"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
         ShowInTaskbar="False" Loaded="Window_Loaded"
-        Topmost="True" WindowStartupLocation="Manual" ResizeMode="NoResize"
-        >
+        Topmost="True" WindowStartupLocation="Manual" ResizeMode="NoResize" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" SizeChanged="HTAWindow_SizeChanged">
     <Grid>
         <Image x:Name="aniBox"/>
     </Grid>

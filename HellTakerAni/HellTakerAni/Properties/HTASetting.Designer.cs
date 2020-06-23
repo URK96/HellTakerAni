@@ -50,9 +50,9 @@ namespace HellTakerAni.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public int WindowWidth {
+        public double WindowWidth {
             get {
-                return ((int)(this["WindowWidth"]));
+                return ((double)(this["WindowWidth"]));
             }
             set {
                 this["WindowWidth"] = value;
@@ -62,24 +62,12 @@ namespace HellTakerAni.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public int WindowHeight {
+        public double WindowHeight {
             get {
-                return ((int)(this["WindowHeight"]));
+                return ((double)(this["WindowHeight"]));
             }
             set {
                 this["WindowHeight"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int SizeIndex {
-            get {
-                return ((int)(this["SizeIndex"]));
-            }
-            set {
-                this["SizeIndex"] = value;
             }
         }
         
