@@ -10,7 +10,7 @@ Let the cute devil girls dance on the screen! :)
 
 If you cannot run this cute program, please download and install .NET Core 3.1 Runtime with below link.
 
-[32bit Download](https://download.visualstudio.microsoft.com/download/pr/77b944fa-aa83-4101-85a9-9d3bde200ebc/f0f0e2a3544593b19df8471cbe9b6b61/dotnet-sdk-3.1.301-win-x86.exe)  [64bit Download](https://download.visualstudio.microsoft.com/download/pr/4e88f517-196e-4b17-a40c-2692c689661d/eed3f5fca28262f764d8b650585a7278/dotnet-sdk-3.1.301-win-x64.exe)
+[32bit Download](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.5-windows-x86-installer)  [64bit Download](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.5-windows-x64-installer)
 
 ---
 
