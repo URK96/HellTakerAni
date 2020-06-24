@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using IWshRuntimeLibrary;
+
+using Microsoft.Win32;
 
 using System;
 using System.Drawing;
@@ -12,6 +14,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+
+using static HellTakerAni.ETC;
 
 namespace HellTakerAni
 {
@@ -28,14 +32,11 @@ namespace HellTakerAni
         Bitmap[] frames = new Bitmap[12];
         ImageSource[] imgFrame = new ImageSource[12];
 
-        MediaPlayer musicPlayer;
-
-        RegistryKey startProgramKey;
-
         System.Timers.Timer resizeTimer;
 
-        string bitmapPath = "Resources/Cerberus.png";
-        string musicPath = "Resources/Vitality.mp3";
+        readonly string startupPath = @"C:\Users\chlwl\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup";
+        string bitmapPath = @"Resources/Cerberus.png";
+        string musicPath = @"Resources/Vitality.mp3";
         string[] imageList =
         {
             "Azazel",
@@ -76,8 +77,6 @@ namespace HellTakerAni
 
             InitializeComponent();
 
-            startProgramKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-
             CreateTray();
 
             resizeTimer = new System.Timers.Timer(1000);
@@ -85,7 +84,7 @@ namespace HellTakerAni
 
             var timer = new DispatcherTimer();
 
-            timer.Interval = TimeSpan.FromMilliseconds(16.7 * 3.5);
+            timer.Interval = TimeSpan.FromSeconds((1 / 60.0) * 3);
             timer.Tick += ChangeNextFrame;
             timer.Start();
 
@@ -176,6 +175,9 @@ namespace HellTakerAni
 
             // Util Item
 
+            string appName = AppDomain.CurrentDomain.FriendlyName;
+            string shortcutFile = Path.Combine(startupPath, $"{appName}.lnk");
+
             var toggleStartUp = new ToolStripMenuItem()
             {
                 Text = "Run At Startup"
@@ -185,17 +187,31 @@ namespace HellTakerAni
                 var item = sender as ToolStripMenuItem;
 
                 item.Checked = !item.Checked;
-                
+
+                if (!Directory.Exists(startupPath))
+                {
+                    Directory.CreateDirectory(startupPath);
+                }
+
                 if (item.Checked)
                 {
-                    startProgramKey.SetValue("HellTakerAni", Path.Combine(Environment.CurrentDirectory, $"{AppDomain.CurrentDomain.FriendlyName}.exe"));
+                    var shell = new WshShell();
+                    var shortcut = shell.CreateShortcut(shortcutFile) as IWshShortcut;
+
+                    shortcut.WorkingDirectory = Environment.CurrentDirectory;
+                    shortcut.IconLocation = shortcut.TargetPath = Path.Combine(Environment.CurrentDirectory, $"{appName}.exe");
+
+                    shortcut.Save();
                 }
                 else
                 {
-                    startProgramKey.DeleteValue("HellTakerAni");
+                    if (System.IO.File.Exists(shortcutFile))
+                    {
+                        System.IO.File.Delete(shortcutFile);
+                    }
                 }
             };
-            toggleStartUp.Checked = startProgramKey.GetValue("HellTakerAni") != null;
+            toggleStartUp.Checked = System.IO.File.Exists(shortcutFile);
 
             var toggleAlwaysOnTop = new ToolStripMenuItem()
             {
@@ -230,7 +246,7 @@ namespace HellTakerAni
             {
                 Text = "Character"
             };
-            
+
             for (int i = 0; i < imageList.Length; ++i)
             {
                 var item = new ToolStripMenuItem()
@@ -314,6 +330,16 @@ namespace HellTakerAni
                 selectMusic.DropDownItems.Add(item);
             }
 
+            var selectVolume = new ToolStripMenuItem()
+            {
+                Text = "Volume"
+            };
+            selectVolume.Click += delegate
+            {
+                var vDialog = new VolumeDialog();
+                vDialog.Show();
+            };
+
 
             // Add menu items
 
@@ -322,6 +348,7 @@ namespace HellTakerAni
             menuStrip.Items.Add(selectCharacter);
             menuStrip.Items.Add(selectSize);
             menuStrip.Items.Add(selectMusic);
+            menuStrip.Items.Add(selectVolume);
             menuStrip.Items.Add(new ToolStripSeparator());
             menuStrip.Items.Add(toggleStartUp);
             menuStrip.Items.Add(toggleAlwaysOnTop);

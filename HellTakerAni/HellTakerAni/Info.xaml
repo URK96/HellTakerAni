@@ -14,7 +14,7 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Label Content="HellTakerAni" HorizontalAlignment="Left" Margin="290,68,0,0" VerticalAlignment="Top" FontSize="36"/>
-        <Label Content="v1.2" HorizontalAlignment="Center" Margin="0,128,0,0" VerticalAlignment="Top" FontSize="16" RenderTransformOrigin="0.385,0.417"/>
+        <Label x:Name="InfoAppVersionLabel" Content="vx.x" HorizontalAlignment="Center" Margin="0,128,0,0" VerticalAlignment="Top" FontSize="16" RenderTransformOrigin="0.385,0.417"/>
         <Label Content="Programmer : URK96" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="20" Margin="0,218,0,0"/>
         <Label Content="Special Thanks : Developer LaLa" HorizontalAlignment="Center" Margin="0,255,0,0" VerticalAlignment="Top" FontSize="20"/>
         <Label Content="This program is freeware. No License." HorizontalAlignment="Left" Margin="289,509,0,0" VerticalAlignment="Top"/>

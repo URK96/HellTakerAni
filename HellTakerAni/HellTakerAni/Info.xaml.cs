@@ -12,6 +12,8 @@ namespace HellTakerAni
         public Info()
         {
             InitializeComponent();
+
+            InfoAppVersionLabel.Content = ETC.appVersion;
         }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)

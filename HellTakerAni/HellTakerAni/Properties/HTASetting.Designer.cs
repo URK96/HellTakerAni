@@ -82,5 +82,29 @@ namespace HellTakerAni.Properties {
                 this["CharacterIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int Volume {
+            get {
+                return ((int)(this["Volume"]));
+            }
+            set {
+                this["Volume"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ApplyExtendVolume {
+            get {
+                return ((bool)(this["ApplyExtendVolume"]));
+            }
+            set {
+                this["ApplyExtendVolume"] = value;
+            }
+        }
     }
 }
