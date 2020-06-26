@@ -7,7 +7,6 @@ namespace HellTakerAni
 {
     internal static class ETC
     {
-        internal static MediaPlayer musicPlayer;
         internal static readonly string appVersion = "v1.3";
     }
 }

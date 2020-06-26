@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-using static HellTakerAni.ETC;
 using static HellTakerAni.Properties.HTASetting;
 
 namespace HellTakerAni
@@ -20,8 +11,12 @@ namespace HellTakerAni
     /// </summary>
     public partial class VolumeDialog : Window
     {
-        public VolumeDialog()
+        private MainWindow parent;
+
+        public VolumeDialog(Window parent)
         {
+            this.parent = parent as MainWindow;
+
             InitializeComponent();
 
             HTAVolumeLevelSlider.Maximum = Default.ApplyExtendVolume ? 200 : 100;
@@ -41,7 +36,7 @@ namespace HellTakerAni
 
             HTAVolumeLevelLabel.Content = $"Volume : {level}";
             vSlider.Value = Default.Volume = level;
-            musicPlayer.Volume = level / 200.0;
+            parent.musicPlayer.Volume = level / 200.0;
 
             Default.Save();
 

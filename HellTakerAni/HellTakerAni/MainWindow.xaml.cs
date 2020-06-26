@@ -1,7 +1,5 @@
 ﻿using IWshRuntimeLibrary;
 
-using Microsoft.Win32;
-
 using System;
 using System.Drawing;
 using System.IO;
@@ -14,8 +12,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-
-using static HellTakerAni.ETC;
 
 namespace HellTakerAni
 {
@@ -31,6 +27,9 @@ namespace HellTakerAni
         Bitmap original;
         Bitmap[] frames = new Bitmap[12];
         ImageSource[] imgFrame = new ImageSource[12];
+        System.Windows.Controls.Image[] aniBoxes;
+
+        internal MediaPlayer musicPlayer;
 
         System.Timers.Timer resizeTimer;
 
@@ -41,6 +40,9 @@ namespace HellTakerAni
         {
             "Azazel",
             "Cerberus",
+            "Cerberus_Full",
+            "Hero",
+            "Hero_Cook",
             "Judgement",
             "Justice",
             "Lucifer",
@@ -48,6 +50,7 @@ namespace HellTakerAni
             "Malina",
             "Modeus",
             "Pandemonica",
+            "Skeleton",
             "Zdrada"
         };
         string[] musicList =
@@ -65,6 +68,7 @@ namespace HellTakerAni
             "150x150"
         };
         int frame = -1;
+        int aniBoxCount = 1;
         bool isRepeat = true;
 
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
@@ -76,6 +80,13 @@ namespace HellTakerAni
             SetStartPositionSize();
 
             InitializeComponent();
+
+            aniBoxes = new System.Windows.Controls.Image[]
+            {
+                aniBox,
+                aniBox1,
+                aniBox2
+            };
 
             CreateTray();
 
@@ -254,24 +265,52 @@ namespace HellTakerAni
                     Text = imageList[i],
                     Tag = i
                 };
-                item.Click += (sender, e) =>
+
+                // Cerberus_Full
+                if (i == 2) 
                 {
-                    var item = sender as ToolStripMenuItem;
-
-                    bitmapPath = $"Resources/{item.Text}.png";
-                    Properties.HTASetting.Default.CharacterIndex = (int)item.Tag;
-
-                    Properties.HTASetting.Default.Save();
-
-                    CreateAnimationList();
-
-                    foreach (ToolStripMenuItem menu in selectCharacter.DropDownItems)
+                    item.Click += (sender, e) =>
                     {
-                        menu.Checked = false;
-                    }
+                        var item = sender as ToolStripMenuItem;
 
-                    item.Checked = true;
-                };
+                        bitmapPath = $"Resources/{item.Text[..8]}.png";
+                        Properties.HTASetting.Default.CharacterIndex = (int)item.Tag;
+
+                        Properties.HTASetting.Default.Save();
+
+                        CreateAnimationList();
+                        SetAniBoxes(3);
+
+                        foreach (ToolStripMenuItem menu in selectCharacter.DropDownItems)
+                        {
+                            menu.Checked = false;
+                        }
+
+                        item.Checked = true;
+                    };
+                }
+                else
+                {
+                    item.Click += (sender, e) =>
+                    {
+                        var item = sender as ToolStripMenuItem;
+
+                        bitmapPath = $"Resources/{item.Text}.png";
+                        Properties.HTASetting.Default.CharacterIndex = (int)item.Tag;
+
+                        Properties.HTASetting.Default.Save();
+
+                        CreateAnimationList();
+                        SetAniBoxes(1);
+
+                        foreach (ToolStripMenuItem menu in selectCharacter.DropDownItems)
+                        {
+                            menu.Checked = false;
+                        }
+
+                        item.Checked = true;
+                    };
+                }
 
                 selectCharacter.DropDownItems.Add(item);
             }
@@ -336,7 +375,7 @@ namespace HellTakerAni
             };
             selectVolume.Click += delegate
             {
-                var vDialog = new VolumeDialog();
+                var vDialog = new VolumeDialog(this);
                 vDialog.Show();
             };
 
@@ -363,7 +402,7 @@ namespace HellTakerAni
 
             var tray = new NotifyIcon()
             {
-                Icon = new System.Drawing.Icon("Resources/logo.ico"),
+                Icon = new Icon("Resources/logo.ico"),
                 Visible = true,
                 Text = "HellTakerAni",
                 ContextMenuStrip = menuStrip
@@ -380,7 +419,7 @@ namespace HellTakerAni
 
                 using (var g = Graphics.FromImage(frames[i]))
                 {
-                    g.DrawImage(original, new System.Drawing.Rectangle(0, 0, 100, 100), new System.Drawing.Rectangle(100 * i, 0, 100, 100), GraphicsUnit.Pixel);
+                    g.DrawImage(original, new System.Drawing.Rectangle(0, 0, 100, 100), new Rectangle(100 * i, 0, 100, 100), GraphicsUnit.Pixel);
                 }
 
                 var handle = frames[i].GetHbitmap();
@@ -421,10 +460,29 @@ namespace HellTakerAni
         private void ChangeNextFrame(object sender, EventArgs e)
         {
             frame = (frame + 1) % 12;
-            aniBox.Source = imgFrame[frame]; 
+
+            for (int i = 0; i < aniBoxCount; ++i)
+            {
+                aniBoxes[i].Source = imgFrame[frame];
+            }
         }
 
+        private void SetAniBoxes(int count)
+        {
+            aniBoxCount = count;
+            HTAWindow.Width = HTAWindow.Height * count;
 
+            foreach (System.Windows.Controls.Image control in aniBoxContainer.Children)
+            {
+                control.Visibility = Visibility.Hidden;
+                control.Source = null;
+            }
+
+            for (int i = 0; i < count; ++i)
+            {
+                aniBoxes[i].Visibility = Visibility.Visible;
+            } 
+        }
 
 
         #region Window styles
