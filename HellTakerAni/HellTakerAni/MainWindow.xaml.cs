@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
+using static HellTakerAni.Properties.HTASetting;
+
 namespace HellTakerAni
 {
     /// <summary>
@@ -32,6 +34,7 @@ namespace HellTakerAni
         internal MediaPlayer musicPlayer;
 
         System.Timers.Timer resizeTimer;
+        internal DispatcherTimer frameTimer;
 
         readonly string startupPath = @"C:\Users\chlwl\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup";
         string bitmapPath = @"Resources/Cerberus.png";
@@ -93,11 +96,11 @@ namespace HellTakerAni
             resizeTimer = new System.Timers.Timer(1000);
             resizeTimer.Elapsed += delegate { ResizeMode = ResizeMode.NoResize; };
 
-            var timer = new DispatcherTimer();
+            frameTimer = new DispatcherTimer();
 
-            timer.Interval = TimeSpan.FromSeconds((1 / 60.0) * 3);
-            timer.Tick += ChangeNextFrame;
-            timer.Start();
+            frameTimer.Interval = TimeSpan.FromSeconds((1 / Default.FrameSpeedSeed));
+            frameTimer.Tick += ChangeNextFrame;
+            frameTimer.Start();
 
             MouseDown += (sender, e) =>
             {
@@ -106,10 +109,10 @@ namespace HellTakerAni
                     case MouseButton.Left:
                         DragMove();
 
-                        Properties.HTASetting.Default.StartPositionX = Left;
-                        Properties.HTASetting.Default.StartPositionY = Top;
+                        Default.StartPositionX = Left;
+                        Default.StartPositionY = Top;
 
-                        Properties.HTASetting.Default.Save();
+                        Default.Save();
                         break;
                     case MouseButton.Right:
                         musicPlayer.Stop();
@@ -267,16 +270,16 @@ namespace HellTakerAni
                 };
 
                 // Cerberus_Full
-                if (i == 2) 
+                if (i == 2)
                 {
                     item.Click += (sender, e) =>
                     {
                         var item = sender as ToolStripMenuItem;
 
                         bitmapPath = $"Resources/{item.Text[..8]}.png";
-                        Properties.HTASetting.Default.CharacterIndex = (int)item.Tag;
+                        Default.CharacterIndex = (int)item.Tag;
 
-                        Properties.HTASetting.Default.Save();
+                        Default.Save();
 
                         CreateAnimationList();
                         SetAniBoxes(3);
@@ -296,9 +299,9 @@ namespace HellTakerAni
                         var item = sender as ToolStripMenuItem;
 
                         bitmapPath = $"Resources/{item.Text}.png";
-                        Properties.HTASetting.Default.CharacterIndex = (int)item.Tag;
+                        Default.CharacterIndex = (int)item.Tag;
 
-                        Properties.HTASetting.Default.Save();
+                        Default.Save();
 
                         CreateAnimationList();
                         SetAniBoxes(1);
@@ -315,7 +318,7 @@ namespace HellTakerAni
                 selectCharacter.DropDownItems.Add(item);
             }
 
-            selectCharacter.DropDownItems[Properties.HTASetting.Default.CharacterIndex].PerformClick();
+            selectCharacter.DropDownItems[Default.CharacterIndex].PerformClick();
 
             var selectSize = new ToolStripMenuItem()
             {
@@ -337,9 +340,9 @@ namespace HellTakerAni
 
                     Width = Height = size;
 
-                    Properties.HTASetting.Default.WindowWidth = Properties.HTASetting.Default.WindowHeight = size;
+                    Default.WindowWidth = Default.WindowHeight = size;
 
-                    Properties.HTASetting.Default.Save();
+                    Default.Save();
                 };
 
                 selectSize.DropDownItems.Add(item);
@@ -379,15 +382,26 @@ namespace HellTakerAni
                 vDialog.Show();
             };
 
+            var selectSpeed = new ToolStripMenuItem()
+            {
+                Text = "Speed"
+            };
+            selectSpeed.Click += delegate
+            {
+                var oDialog = new ControlSpeedDialog(this);
+                oDialog.Show();
+            };
+
 
             // Add menu items
 
             var menuStrip = new ContextMenuStrip();
-            
+
             menuStrip.Items.Add(selectCharacter);
             menuStrip.Items.Add(selectSize);
             menuStrip.Items.Add(selectMusic);
             menuStrip.Items.Add(selectVolume);
+            //menuStrip.Items.Add(selectSpeed);
             menuStrip.Items.Add(new ToolStripSeparator());
             menuStrip.Items.Add(toggleStartUp);
             menuStrip.Items.Add(toggleAlwaysOnTop);
@@ -419,7 +433,7 @@ namespace HellTakerAni
 
                 using (var g = Graphics.FromImage(frames[i]))
                 {
-                    g.DrawImage(original, new System.Drawing.Rectangle(0, 0, 100, 100), new Rectangle(100 * i, 0, 100, 100), GraphicsUnit.Pixel);
+                    g.DrawImage(original, new Rectangle(0, 0, 100, 100), new Rectangle(100 * i, 0, 100, 100), GraphicsUnit.Pixel);
                 }
 
                 var handle = frames[i].GetHbitmap();
@@ -437,15 +451,15 @@ namespace HellTakerAni
 
         private void SetStartPositionSize()
         {
-            double x = Properties.HTASetting.Default.StartPositionX;
-            double y = Properties.HTASetting.Default.StartPositionY;
+            double x = Default.StartPositionX;
+            double y = Default.StartPositionY;
 
             if ((x == -1) || (y == -1))
             {
-                Properties.HTASetting.Default.StartPositionX = Left;
-                Properties.HTASetting.Default.StartPositionY = Top;
+                Default.StartPositionX = Left;
+                Default.StartPositionY = Top;
 
-                Properties.HTASetting.Default.Save();
+                Default.Save();
             }
             else
             {
@@ -453,8 +467,8 @@ namespace HellTakerAni
                 Top = y;
             }
 
-            Width = Properties.HTASetting.Default.WindowWidth;
-            Height = Properties.HTASetting.Default.WindowHeight;
+            Width = Default.WindowWidth;
+            Height = Default.WindowHeight;
         }
 
         private void ChangeNextFrame(object sender, EventArgs e)
@@ -481,7 +495,7 @@ namespace HellTakerAni
             for (int i = 0; i < count; ++i)
             {
                 aniBoxes[i].Visibility = Visibility.Visible;
-            } 
+            }
         }
 
 
@@ -573,10 +587,10 @@ namespace HellTakerAni
 
         private void HTAWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Properties.HTASetting.Default.WindowWidth = e.NewSize.Width;
-            Properties.HTASetting.Default.WindowHeight = e.NewSize.Height;
+            Default.WindowWidth = e.NewSize.Width;
+            Default.WindowHeight = e.NewSize.Height;
 
-            Properties.HTASetting.Default.Save();
+            Default.Save();
         }
     }
 }

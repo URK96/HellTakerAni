@@ -106,5 +106,17 @@ namespace HellTakerAni.Properties {
                 this["ApplyExtendVolume"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public double FrameSpeedSeed {
+            get {
+                return ((double)(this["FrameSpeedSeed"]));
+            }
+            set {
+                this["FrameSpeedSeed"] = value;
+            }
+        }
     }
 }
