@@ -10,8 +10,10 @@ Let the cute devil girls dance on the screen! :)
 
 If you cannot run this cute program, please download and install .NET Core 3.1 Runtime with below link.
 
-[32bit Download](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.5-windows-x86-installer)  [64bit Download](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.5-windows-x64-installer)
+[.NET Core 32bit Download](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.5-windows-x86-installer)  [.NET Core 64bit Download](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.5-windows-x64-installer)
 
+
+[HellTakerAni Download](https://github.com/URK96/HellTakerAni/releases)
 ---
 
 사용 언어 : C# (WPF with .NET Core)
