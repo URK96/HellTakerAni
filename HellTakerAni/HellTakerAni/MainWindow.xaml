@@ -11,7 +11,18 @@
         AllowsTransparency="True"
         Background="Transparent"
         ShowInTaskbar="False" Loaded="Window_Loaded"
-        Topmost="True" WindowStartupLocation="Manual" ResizeMode="NoResize" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" SizeChanged="HTAWindow_SizeChanged">
+        Visibility="Visible"
+        Topmost="True" WindowStartupLocation="Manual" Width="Auto" Height="Auto" ResizeMode="NoResize" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" SizeChanged="HTAWindow_SizeChanged">
+    <Window.ContextMenu>
+        <ContextMenu x:Name="MainContextMenu">
+            <MenuItem x:Name="MainContextMenu_Character" Header="Character" />
+            <MenuItem x:Name="MainContextMenu_Size" Header="Size" />
+            <Separator />
+            <MenuItem x:Name="MainContextMenu_ToggleTopmost" Header="Always On Top"/>
+            <Separator />
+            <MenuItem x:Name="MainContextMenu_Remove" Header="Remove" />
+        </ContextMenu>
+    </Window.ContextMenu>
     <Grid x:Name="aniBoxContainer">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -19,7 +30,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         
-        <Image x:Name="aniBox" Grid.Column="0"/>
+        <Image x:Name="aniBox" Grid.Column="0" Visibility="Visible"/>
         <Image x:Name="aniBox1" Grid.Column="1" Visibility="Hidden"/>
         <Image x:Name="aniBox2" Grid.Column="2" Visibility="Hidden"/>
     </Grid>

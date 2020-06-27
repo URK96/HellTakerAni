@@ -11,12 +11,8 @@ namespace HellTakerAni
     /// </summary>
     public partial class VolumeDialog : Window
     {
-        private MainWindow parent;
-
-        public VolumeDialog(Window parent)
+        public VolumeDialog()
         {
-            this.parent = parent as MainWindow;
-
             InitializeComponent();
 
             HTAVolumeLevelSlider.Maximum = Default.ApplyExtendVolume ? 200 : 100;
@@ -36,7 +32,6 @@ namespace HellTakerAni
 
             HTAVolumeLevelLabel.Content = $"Volume : {level}";
             vSlider.Value = Default.Volume = level;
-            parent.musicPlayer.Volume = level / 200.0;
 
             Default.Save();
 

@@ -1,18 +1,16 @@
-﻿using IWshRuntimeLibrary;
-
+﻿
 using System;
 using System.Drawing;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
+using static HellTakerAni.ETC;
 using static HellTakerAni.Properties.HTASetting;
 
 namespace HellTakerAni
@@ -22,57 +20,14 @@ namespace HellTakerAni
     /// </summary>
     public partial class MainWindow : Window
     {
-        enum MusicState { Stop, Play, Pause }
-
-        MusicState mState = MusicState.Stop;
-
         Bitmap original;
         Bitmap[] frames = new Bitmap[12];
         ImageSource[] imgFrame = new ImageSource[12];
         System.Windows.Controls.Image[] aniBoxes;
 
-        internal MediaPlayer musicPlayer;
+        //string bitmapPath = @"Resources/Cerberus.png";
 
-        System.Timers.Timer resizeTimer;
-        internal DispatcherTimer frameTimer;
-
-        readonly string startupPath = @"C:\Users\chlwl\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup";
-        string bitmapPath = @"Resources/Cerberus.png";
-        string musicPath = @"Resources/Vitality.mp3";
-        string[] imageList =
-        {
-            "Azazel",
-            "Cerberus",
-            "Cerberus_Full",
-            "Hero",
-            "Hero_Cook",
-            "Judgement",
-            "Justice",
-            "Lucifer",
-            "Lucifer_Cook",
-            "Malina",
-            "Modeus",
-            "Pandemonica",
-            "Skeleton",
-            "Zdrada"
-        };
-        string[] musicList =
-        {
-            "Vitality",
-            "Vitality_VIP",
-            "Vitality_SayMaxWell_Remix"
-        };
-        string[] sizeList =
-        {
-            "50x50",
-            "75x75",
-            "100x100",
-            "125x125",
-            "150x150"
-        };
-        int frame = -1;
         int aniBoxCount = 1;
-        bool isRepeat = true;
 
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -80,9 +35,21 @@ namespace HellTakerAni
 
         public MainWindow()
         {
-            SetStartPositionSize();
+
+        }
+
+        public MainWindow(int startCharacterIndex)
+        {
+            if (isFirst)
+            {
+                SetStartPositionSize();
+            }
 
             InitializeComponent();
+            SetMouseEvent();
+            InitContextMenuItems();
+
+            Topmost = true;
 
             aniBoxes = new System.Windows.Controls.Image[]
             {
@@ -91,17 +58,33 @@ namespace HellTakerAni
                 aniBox2
             };
 
-            CreateTray();
+            /*string fileName = "";
 
-            resizeTimer = new System.Timers.Timer(1000);
-            resizeTimer.Elapsed += delegate { ResizeMode = ResizeMode.NoResize; };
+            if (startCharacterIndex == 2)
+            {
+                fileName = imageList[startCharacterIndex][..8];
+            }
+            else
+            {
+                fileName = imageList[startCharacterIndex];
+            }
 
-            frameTimer = new DispatcherTimer();
+            CreateAnimationList(imageList);
+            SetAniBoxes(1);
+            ChangeCheckCharacterSelect(startCharacterIndex);*/
 
-            frameTimer.Interval = TimeSpan.FromSeconds((1 / Default.FrameSpeedSeed));
+            (MainContextMenu_Character.Items[startCharacterIndex] as MenuItem).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+
             frameTimer.Tick += ChangeNextFrame;
-            frameTimer.Start();
 
+            if (isFirst)
+            {
+                isFirst = false;
+            }
+        }
+
+        private void SetMouseEvent()
+        {
             MouseDown += (sender, e) =>
             {
                 switch (e.ChangedButton)
@@ -120,6 +103,7 @@ namespace HellTakerAni
                         break;
                 }
             };
+
             MouseDoubleClick += (sender, e) =>
             {
                 if (e.ChangedButton == MouseButton.Left)
@@ -141,291 +125,114 @@ namespace HellTakerAni
                     }
                 }
             };
-
-            musicPlayer = new MediaPlayer();
-            musicPlayer.MediaEnded += delegate
-            {
-                if (isRepeat)
-                {
-                    musicPlayer.Position = TimeSpan.Zero;
-                    musicPlayer.Play();
-                }
-                else
-                {
-                    mState = MusicState.Stop;
-                }
-            };
         }
 
-        void CreateTray()
+        private void InitContextMenuItems()
         {
-            // Program Item
-
-            var exitItem = new ToolStripMenuItem()
-            {
-                Text = "Exit"
-            };
-            exitItem.Click += delegate { System.Windows.Application.Current.Shutdown(); };
-
-            var infoItem = new ToolStripMenuItem()
-            {
-                Text = "Info"
-            };
-            infoItem.Click += delegate
-            {
-                var infoWindow = new Info();
-                infoWindow.Show();
-            };
-
-            var tipItem = new ToolStripMenuItem()
-            {
-                Text = "Tip"
-            };
-            tipItem.Click += delegate
-            {
-                System.Windows.MessageBox.Show(Properties.Resources.TipMessage, "HellTakerAni Tip", MessageBoxButton.OK);
-            };
-
-
-            // Util Item
-
-            string appName = AppDomain.CurrentDomain.FriendlyName;
-            string shortcutFile = Path.Combine(startupPath, $"{appName}.lnk");
-
-            var toggleStartUp = new ToolStripMenuItem()
-            {
-                Text = "Run At Startup"
-            };
-            toggleStartUp.Click += (sender, e) =>
-            {
-                var item = sender as ToolStripMenuItem;
-
-                item.Checked = !item.Checked;
-
-                if (!Directory.Exists(startupPath))
-                {
-                    Directory.CreateDirectory(startupPath);
-                }
-
-                if (item.Checked)
-                {
-                    var shell = new WshShell();
-                    var shortcut = shell.CreateShortcut(shortcutFile) as IWshShortcut;
-
-                    shortcut.WorkingDirectory = Environment.CurrentDirectory;
-                    shortcut.IconLocation = shortcut.TargetPath = Path.Combine(Environment.CurrentDirectory, $"{appName}.exe");
-
-                    shortcut.Save();
-                }
-                else
-                {
-                    if (System.IO.File.Exists(shortcutFile))
-                    {
-                        System.IO.File.Delete(shortcutFile);
-                    }
-                }
-            };
-            toggleStartUp.Checked = System.IO.File.Exists(shortcutFile);
-
-            var toggleAlwaysOnTop = new ToolStripMenuItem()
-            {
-                Text = "Always On Top"
-            };
-            toggleAlwaysOnTop.Click += (sender, e) =>
-            {
-                var item = sender as ToolStripMenuItem;
-
-                item.Checked = !item.Checked;
-                Topmost = item.Checked;
-            };
-            toggleAlwaysOnTop.Checked = true;
-
-            var toggleMusicRepeat = new ToolStripMenuItem()
-            {
-                Text = "Repeat Music"
-            };
-            toggleMusicRepeat.Click += (sender, e) =>
-            {
-                var item = sender as ToolStripMenuItem;
-
-                item.Checked = !item.Checked;
-                isRepeat = item.Checked;
-            };
-            toggleMusicRepeat.Checked = isRepeat;
-
-
-            // Display & Audio Item
-
-            var selectCharacter = new ToolStripMenuItem()
-            {
-                Text = "Character"
-            };
+            // Character Menu
 
             for (int i = 0; i < imageList.Length; ++i)
             {
-                var item = new ToolStripMenuItem()
+                var characterItem = new MenuItem()
                 {
-                    Text = imageList[i],
+                    Header = imageList[i],
                     Tag = i
                 };
 
-                // Cerberus_Full
                 if (i == 2)
                 {
-                    item.Click += (sender, e) =>
+                    characterItem.Click += (sender, e) =>
                     {
-                        var item = sender as ToolStripMenuItem;
+                        var item = sender as MenuItem;
+                        var id = (int)item.Tag;
 
-                        bitmapPath = $"Resources/{item.Text[..8]}.png";
-                        Default.CharacterIndex = (int)item.Tag;
+                        //bitmapPath = $"Resources/{$"{item.Header}"[..8]}.png";
+                        Default.CharacterIndex = id;
 
                         Default.Save();
 
-                        CreateAnimationList();
+                        CreateAnimationList($"{item.Header}"[..8]);
                         SetAniBoxes(3);
-
-                        foreach (ToolStripMenuItem menu in selectCharacter.DropDownItems)
-                        {
-                            menu.Checked = false;
-                        }
-
-                        item.Checked = true;
+                        ChangeCheckCharacterSelect(id);
                     };
                 }
                 else
                 {
-                    item.Click += (sender, e) =>
+                    characterItem.Click += (sender, e) =>
                     {
-                        var item = sender as ToolStripMenuItem;
+                        var item = sender as MenuItem;
+                        var id = (int)item.Tag;
 
-                        bitmapPath = $"Resources/{item.Text}.png";
-                        Default.CharacterIndex = (int)item.Tag;
+                        //bitmapPath = $"Resources/{item.Header}.png";
+                        Default.CharacterIndex = id;
 
                         Default.Save();
 
-                        CreateAnimationList();
+                        CreateAnimationList(item.Header.ToString());
                         SetAniBoxes(1);
-
-                        foreach (ToolStripMenuItem menu in selectCharacter.DropDownItems)
-                        {
-                            menu.Checked = false;
-                        }
-
-                        item.Checked = true;
+                        ChangeCheckCharacterSelect(id);
                     };
                 }
 
-                selectCharacter.DropDownItems.Add(item);
+                MainContextMenu_Character.Items.Add(characterItem);
             }
 
-            selectCharacter.DropDownItems[Default.CharacterIndex].PerformClick();
 
-            var selectSize = new ToolStripMenuItem()
-            {
-                Text = "Preset Size"
-            };
+            // Size Menu
 
             for (int i = 0; i < sizeList.Length; ++i)
             {
-                var item = new ToolStripMenuItem()
+                var item = new MenuItem()
                 {
-                    Text = sizeList[i],
+                    Header = sizeList[i],
                     Tag = i
                 };
                 item.Click += (sender, e) =>
                 {
-                    var item = sender as ToolStripMenuItem;
-                    int index = (int)item.Tag;
-                    int size = 50 + 25 * index;
+                    var item = sender as MenuItem;
+                    int size = 50 + 25 * (int)item.Tag;
 
                     Width = Height = size;
-
                     Default.WindowWidth = Default.WindowHeight = size;
 
                     Default.Save();
                 };
 
-                selectSize.DropDownItems.Add(item);
+                MainContextMenu_Size.Items.Add(item);
             }
 
-            var selectMusic = new ToolStripMenuItem()
-            {
-                Text = "Music"
-            };
 
-            foreach (string s in musicList)
-            {
-                var item = new ToolStripMenuItem()
-                {
-                    Text = s
-                };
-                item.Click += (sender, e) =>
-                {
-                    var item = sender as ToolStripMenuItem;
-                    musicPath = $"Resources/{item.Text}.mp3";
+            // Toggle Topmost Menu
 
-                    musicPlayer.Open(new Uri(musicPath, UriKind.Relative));
-                    musicPlayer.Play();
-                    mState = MusicState.Play;
-                };
-
-                selectMusic.DropDownItems.Add(item);
-            }
-
-            var selectVolume = new ToolStripMenuItem()
+            MainContextMenu_ToggleTopmost.Click += (sender, e) =>
             {
-                Text = "Volume"
-            };
-            selectVolume.Click += delegate
-            {
-                var vDialog = new VolumeDialog(this);
-                vDialog.Show();
-            };
-
-            var selectSpeed = new ToolStripMenuItem()
-            {
-                Text = "Speed"
-            };
-            selectSpeed.Click += delegate
-            {
-                var oDialog = new ControlSpeedDialog(this);
-                oDialog.Show();
+                (sender as MenuItem).IsChecked = Topmost = !Topmost;
             };
 
 
-            // Add menu items
+            // Remove Menu
 
-            var menuStrip = new ContextMenuStrip();
-
-            menuStrip.Items.Add(selectCharacter);
-            menuStrip.Items.Add(selectSize);
-            menuStrip.Items.Add(selectMusic);
-            menuStrip.Items.Add(selectVolume);
-            //menuStrip.Items.Add(selectSpeed);
-            menuStrip.Items.Add(new ToolStripSeparator());
-            menuStrip.Items.Add(toggleStartUp);
-            menuStrip.Items.Add(toggleAlwaysOnTop);
-            menuStrip.Items.Add(toggleMusicRepeat);
-            menuStrip.Items.Add(new ToolStripSeparator());
-            menuStrip.Items.Add(infoItem);
-            menuStrip.Items.Add(tipItem);
-            menuStrip.Items.Add(exitItem);
-
-
-            // Create tray icon
-
-            var tray = new NotifyIcon()
+            MainContextMenu_Remove.Click += delegate
             {
-                Icon = new Icon("Resources/logo.ico"),
-                Visible = true,
-                Text = "HellTakerAni",
-                ContextMenuStrip = menuStrip
+                frameTimer.Tick -= ChangeNextFrame;
+                Close();
+                GC.Collect();
             };
         }
 
-        private void CreateAnimationList()
+        private void ChangeCheckCharacterSelect(int index)
         {
-            original = Image.FromFile(bitmapPath) as Bitmap;
+            foreach (MenuItem menuItem in MainContextMenu_Character.Items)
+            {
+                menuItem.IsChecked = (int)menuItem.Tag == index;
+            }
+        }
+
+        private void CreateAnimationList(string fileName)
+        {
+            string bitmapPath = @$"Resources/{fileName}.png";
+
+            original = System.Drawing.Image.FromFile(bitmapPath) as Bitmap;
 
             for (int i = 0; i < 12; ++i)
             {
@@ -473,11 +280,9 @@ namespace HellTakerAni
 
         private void ChangeNextFrame(object sender, EventArgs e)
         {
-            frame = (frame + 1) % 12;
-
             for (int i = 0; i < aniBoxCount; ++i)
             {
-                aniBoxes[i].Source = imgFrame[frame];
+                aniBoxes[i].Source = imgFrame[frameCount];
             }
         }
 
@@ -564,10 +369,10 @@ namespace HellTakerAni
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var wndHelper = new WindowInteropHelper(this);
-
             int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
 
             exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
+
             SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
         }
 
