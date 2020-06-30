@@ -1,0 +1,26 @@
+﻿<Window x:Class="HellTakerAni.OptionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HellTakerAni"
+        mc:Ignorable="d"
+        Title="HTA Option" Height="200" Width="330" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid Margin="0,0,0,-6">
+        <TabControl>
+            <TabItem Header="Volume">
+                <Grid Background="#FFE5E5E5">
+                    <Slider x:Name="HTAVolumeLevelSlider" HorizontalAlignment="Center" VerticalAlignment="Top" Width="300" TickPlacement="BottomRight" SmallChange="1" TickFrequency="5" Margin="0,28,0,0" Grid.ColumnSpan="2"/>
+                    <Label x:Name="HTAVolumeLevelLabel" Content="Volume : 0" HorizontalAlignment="Center" Margin="0,54,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <CheckBox x:Name="HTAVolumeExtendOption" Content="Extend Volume Control" HorizontalAlignment="Center" Margin="0,82,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Grid.Column="1"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Frame">
+                <Grid Background="#FFE5E5E5">
+                    <Slider x:Name="HTAFrameLevelSlider" HorizontalAlignment="Center" VerticalAlignment="Top" Width="300" TickPlacement="BottomRight" SmallChange="1" Margin="0,28,0,0" Maximum="30" Minimum="10" Value="20"/>
+                    <Label x:Name="HTAFrameLevelLabel" Content="Frame Level : 0" HorizontalAlignment="Center" Margin="0,54,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

@@ -1,10 +1,12 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -21,29 +23,22 @@ namespace HellTakerAni
     public partial class MainWindow : Window
     {
         Bitmap original;
-        Bitmap[] frames = new Bitmap[12];
-        ImageSource[] imgFrame = new ImageSource[12];
+        List<Bitmap> frames = new List<Bitmap>(12);
+        List<ImageSource> imgFrame = new List<ImageSource>(12);
         System.Windows.Controls.Image[] aniBoxes;
 
-        //string bitmapPath = @"Resources/Cerberus.png";
-
+        int frame = 0;
+        int frameCount = -1;
         int aniBoxCount = 1;
+        int characterIndex = 0;
 
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DeleteObject([In] IntPtr hObject);
 
-        public MainWindow()
-        {
-
-        }
-
         public MainWindow(int startCharacterIndex)
         {
-            if (isFirst)
-            {
-                SetStartPositionSize();
-            }
+            SetStartPositionSize();
 
             InitializeComponent();
             SetMouseEvent();
@@ -58,29 +53,9 @@ namespace HellTakerAni
                 aniBox2
             };
 
-            /*string fileName = "";
-
-            if (startCharacterIndex == 2)
-            {
-                fileName = imageList[startCharacterIndex][..8];
-            }
-            else
-            {
-                fileName = imageList[startCharacterIndex];
-            }
-
-            CreateAnimationList(imageList);
-            SetAniBoxes(1);
-            ChangeCheckCharacterSelect(startCharacterIndex);*/
-
             (MainContextMenu_Character.Items[startCharacterIndex] as MenuItem).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 
             frameTimer.Tick += ChangeNextFrame;
-
-            if (isFirst)
-            {
-                isFirst = false;
-            }
         }
 
         private void SetMouseEvent()
@@ -146,7 +121,6 @@ namespace HellTakerAni
                         var item = sender as MenuItem;
                         var id = (int)item.Tag;
 
-                        //bitmapPath = $"Resources/{$"{item.Header}"[..8]}.png";
                         Default.CharacterIndex = id;
 
                         Default.Save();
@@ -163,7 +137,6 @@ namespace HellTakerAni
                         var item = sender as MenuItem;
                         var id = (int)item.Tag;
 
-                        //bitmapPath = $"Resources/{item.Header}.png";
                         Default.CharacterIndex = id;
 
                         Default.Save();
@@ -192,10 +165,8 @@ namespace HellTakerAni
                     var item = sender as MenuItem;
                     int size = 50 + 25 * (int)item.Tag;
 
-                    Width = Height = size;
-                    Default.WindowWidth = Default.WindowHeight = size;
-
-                    Default.Save();
+                    Width = size * aniBoxCount;
+                    Height = size;
                 };
 
                 MainContextMenu_Size.Items.Add(item);
@@ -222,6 +193,8 @@ namespace HellTakerAni
 
         private void ChangeCheckCharacterSelect(int index)
         {
+            characterIndex = index;
+
             foreach (MenuItem menuItem in MainContextMenu_Character.Items)
             {
                 menuItem.IsChecked = (int)menuItem.Tag == index;
@@ -234,9 +207,14 @@ namespace HellTakerAni
 
             original = System.Drawing.Image.FromFile(bitmapPath) as Bitmap;
 
-            for (int i = 0; i < 12; ++i)
+            frame = original.Width / 100;
+
+            frames.Clear();
+            imgFrame.Clear();
+
+            for (int i = 0; i < frame; ++i)
             {
-                frames[i] = new Bitmap(100, 100);
+                frames.Add(new Bitmap(100, 100));
 
                 using (var g = Graphics.FromImage(frames[i]))
                 {
@@ -247,7 +225,7 @@ namespace HellTakerAni
 
                 try
                 {
-                    imgFrame[i] = Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    imgFrame.Add(Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()));
                 }
                 finally
                 {
@@ -280,6 +258,8 @@ namespace HellTakerAni
 
         private void ChangeNextFrame(object sender, EventArgs e)
         {
+            frameCount = (characterIndex == 3) || (characterIndex == 4) ? mainFrameCount : mainFrameCount % 12;
+
             for (int i = 0; i < aniBoxCount; ++i)
             {
                 aniBoxes[i].Source = imgFrame[frameCount];

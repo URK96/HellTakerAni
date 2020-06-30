@@ -57,6 +57,12 @@
     <None Update="Resources\Cerberus.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Glorious_Left.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Glorious_Right.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Hero.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

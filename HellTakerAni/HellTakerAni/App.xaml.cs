@@ -1,16 +1,12 @@
 ﻿using IWshRuntimeLibrary;
+
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Threading;
+
 using static HellTakerAni.ETC;
 using static HellTakerAni.Properties.HTASetting;
 
@@ -40,7 +36,7 @@ namespace HellTakerAni
             frameTimer = new DispatcherTimer();
 
             frameTimer.Interval = TimeSpan.FromSeconds((1 / Default.FrameSpeedSeed));
-            frameTimer.Tick += delegate { frameCount = (frameCount + 1) % 12; };
+            frameTimer.Tick += delegate { mainFrameCount = (mainFrameCount + 1) % 24; };
             frameTimer.Start();
 
             CreateTray();
@@ -179,14 +175,14 @@ namespace HellTakerAni
                 selectMusic.DropDownItems.Add(item);
             }
 
-            var selectVolume = new ToolStripMenuItem()
+            var selectOption = new ToolStripMenuItem()
             {
-                Text = "Volume"
+                Text = "Options"
             };
-            selectVolume.Click += delegate
+            selectOption.Click += delegate
             {
-                var vDialog = new VolumeDialog();
-                vDialog.Show();
+                var oDialog = new OptionDialog();
+                oDialog.Show();
             };
 
 
@@ -196,10 +192,10 @@ namespace HellTakerAni
 
             menuStrip.Items.Add(selectNewCharacter);
             menuStrip.Items.Add(selectMusic);
-            menuStrip.Items.Add(selectVolume);
             menuStrip.Items.Add(new ToolStripSeparator());
             menuStrip.Items.Add(toggleStartUp);
             menuStrip.Items.Add(toggleMusicRepeat);
+            menuStrip.Items.Add(selectOption);
             menuStrip.Items.Add(new ToolStripSeparator());
             menuStrip.Items.Add(infoItem);
             menuStrip.Items.Add(exitItem);

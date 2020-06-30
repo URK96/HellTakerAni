@@ -12,7 +12,7 @@ namespace HellTakerAni
 
         internal static MusicState mState = MusicState.Stop;
 
-        internal static readonly string appVersion = "v1.5";
+        internal static readonly string appVersion = "v2.0";
 
         internal static readonly string startupPath = @"C:\Users\chlwl\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup";
 
@@ -39,6 +39,8 @@ namespace HellTakerAni
             "Azazel",
             "Cerberus",
             "Cerberus_Full",
+            "Glorious_Left",
+            "Glorious_Right",
             "Hero",
             "Hero_Cook",
             "Judgement",
@@ -53,9 +55,8 @@ namespace HellTakerAni
         };
 
         internal static DispatcherTimer frameTimer;
-
-        internal static int frameCount = -1;
+        
         internal static bool isRepeat = true;
-        internal static bool isFirst = true;
+        internal static int mainFrameCount = -1;
     }
 }

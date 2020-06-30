@@ -12,7 +12,7 @@
         Background="Transparent"
         ShowInTaskbar="False" Loaded="Window_Loaded"
         Visibility="Visible"
-        Topmost="True" WindowStartupLocation="Manual" Width="Auto" Height="Auto" ResizeMode="NoResize" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" SizeChanged="HTAWindow_SizeChanged">
+        Topmost="True" WindowStartupLocation="Manual" ResizeMode="NoResize" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" SizeChanged="HTAWindow_SizeChanged">
     <Window.ContextMenu>
         <ContextMenu x:Name="MainContextMenu">
             <MenuItem x:Name="MainContextMenu_Character" Header="Character" />
