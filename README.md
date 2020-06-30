@@ -26,9 +26,10 @@ Use language : C# (WPF with .NET Core)
 
 # 기능
 
-- 10명의 악마 소녀들 (Ten Devil Girls)
+- 10명의 악마 소녀들 + 4명의 추가 캐릭터 (10 Devil girls + 4 Extra characters)
+- 여러 명의 악마 소녀들을 동시 배치 (Place girls at the same time)
 - 항상 위에 표시되는 악마 소녀들 (Always appear above)
-- 중독성 있는 노래들 (Addictive Songs)
+- 중독성 있는 노래들 (Addictive songs)
 - 부팅 시 자동으로 등장하는 소녀들 (Autostart)
 
 
