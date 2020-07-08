@@ -18,23 +18,48 @@
     <Grid>
         <Label Content="HellTakerAni" HorizontalAlignment="Center" Margin="0,68,0,0" VerticalAlignment="Top" FontSize="36" Foreground="White"/>
         <Label x:Name="InfoAppVersionLabel" Content="vx.x" HorizontalAlignment="Center" Margin="0,128,0,0" VerticalAlignment="Top" FontSize="16" RenderTransformOrigin="0.385,0.417" Foreground="White"/>
-        <Label Content="Programmer : URK96" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="20" Margin="0,218,0,0" Foreground="LightGray"/>
-        <Label Content="Special Thanks : Developer LaLa" HorizontalAlignment="Center" Margin="0,255,0,0" VerticalAlignment="Top" FontSize="20" Foreground="LightGray"/>
-        <Label Content="This program is freeware. No License." HorizontalAlignment="Center" Margin="0,509,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <Label Content="Music" HorizontalAlignment="Center" Margin="0,335,0,0" VerticalAlignment="Top" FontSize="18" Foreground="White"/>
-        <TextBlock HorizontalAlignment="Center" Margin="0,384,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+        <Label Content="Programmer : URK96" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="20" Margin="0,195,0,0" Foreground="LightGray"/>
+        <Label Content="Special Thanks : Developer LaLa" HorizontalAlignment="Center" Margin="0,232,0,0" VerticalAlignment="Top" FontSize="20" Foreground="LightGray"/>
+        <Label Content="This program is freeware. No License." HorizontalAlignment="Center" Margin="0,534,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <Label Content="Music" HorizontalAlignment="Center" Margin="0,300,0,0" VerticalAlignment="Top" FontSize="18" Foreground="White"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,336,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="https://www.youtube.com/watch?v=rUs0iQZHDkM" RequestNavigate="Hyperlink_RequestNavigate">
+                Apropos
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Center" Margin="0,357,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="https://www.youtube.com/watch?v=K_YbbAhRbIQ" RequestNavigate="Hyperlink_RequestNavigate">
+                Epitomize
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Center" Margin="0,378,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="https://www.youtube.com/watch?v=diScvS_ZOpM" RequestNavigate="Hyperlink_RequestNavigate">
+                Luminescent
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Center" Margin="0,399,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
             <Hyperlink NavigateUri="https://www.youtube.com/watch?v=EnDXGQmCz3U" RequestNavigate="Hyperlink_RequestNavigate">
                 Vitality
             </Hyperlink>
         </TextBlock>
-        <TextBlock HorizontalAlignment="Center" Margin="0,405,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+        <TextBlock HorizontalAlignment="Center" Margin="0,420,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
             <Hyperlink NavigateUri="https://www.youtube.com/watch?v=x6kGfw4cK7Y" RequestNavigate="Hyperlink_RequestNavigate">
                 Vitality VIP Edit
             </Hyperlink>
         </TextBlock>
-        <TextBlock HorizontalAlignment="Center" Margin="0,426,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+        <TextBlock HorizontalAlignment="Center" Margin="0,441,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
             <Hyperlink NavigateUri="https://www.youtube.com/watch?v=qDrzzbBFHvI" RequestNavigate="Hyperlink_RequestNavigate">
                 Vitality SayMaxWell Remix
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Center" Margin="0,464,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="https://www.youtube.com/watch?v=tUE86Nic72I" RequestNavigate="Hyperlink_RequestNavigate">
+                Vitality t+pazolite Remix
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Center" Margin="0,489,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="https://www.youtube.com/watch?v=oT7RP8yLN4o" RequestNavigate="Hyperlink_RequestNavigate">
+                Vitality Axez Remix
             </Hyperlink>
         </TextBlock>
 

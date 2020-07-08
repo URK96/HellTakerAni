@@ -37,6 +37,7 @@ namespace HellTakerAni
 
             HTAVolumeLevelLabel.Content = $"Volume : {level}";
             vSlider.Value = Default.Volume = level;
+            musicPlayer.Volume = level / 200.0;
 
             Default.Save();
 

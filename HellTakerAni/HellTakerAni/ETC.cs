@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using System.Windows.Threading;
+using System;
 
 namespace HellTakerAni
 {
@@ -12,17 +10,22 @@ namespace HellTakerAni
 
         internal static MusicState mState = MusicState.Stop;
 
-        internal static readonly string appVersion = "v2.0";
+        internal static readonly string appVersion = "v2.1";
 
-        internal static readonly string startupPath = @"C:\Users\chlwl\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup";
+        internal static readonly string startupPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
 
         internal static MediaPlayer musicPlayer;
         internal static string musicPath = @"Resources/Vitality.mp3";
         internal static string[] musicList =
         {
+            "Apropos",
+            "Epitomize",
+            "Luminescent",
             "Vitality",
             "Vitality_VIP",
-            "Vitality_SayMaxWell_Remix"
+            "Vitality_SayMaxWell_Remix",
+            "Vitality_t+pazolite_Remix",
+            "Vitality_Axez_Remix"
         };
 
         internal static string[] sizeList =
@@ -37,6 +40,7 @@ namespace HellTakerAni
         internal static string[] imageList =
         {
             "Azazel",
+            "Bellzebub",
             "Cerberus",
             "Cerberus_Full",
             "Glorious_Left",
