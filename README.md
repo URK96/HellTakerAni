@@ -15,6 +15,7 @@ If you cannot run this cute program, please download and install .NET Core 3.1 R
 
 [HellTakerAni Download](https://github.com/URK96/HellTakerAni/releases)
 
+[HellTakerAni Instruction (HellTakerAni 사용법)](https://github.com/URK96/HellTakerAni/wiki)
 
 ---
 
@@ -26,7 +27,7 @@ Use language : C# (WPF with .NET Core)
 
 # 기능
 
-- 10명의 악마 소녀들 + 4명의 추가 캐릭터 (10 Devil girls + 4 Extra characters)
+- 10명의 악마 소녀들 + 5명의 추가 캐릭터 (10 Devil girls + 5 Extra characters)
 - 여러 명의 악마 소녀들을 동시 배치 (Place girls at the same time)
 - 항상 위에 표시되는 악마 소녀들 (Always appear above)
 - 중독성 있는 노래들 (Addictive songs)
