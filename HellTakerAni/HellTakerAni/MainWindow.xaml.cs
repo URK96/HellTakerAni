@@ -42,8 +42,6 @@ namespace HellTakerAni
             SetMouseEvent();
             InitContextMenuItems();
 
-            Topmost = true;
-
             aniBoxes = new System.Windows.Controls.Image[]
             {
                 aniBox,
@@ -112,7 +110,7 @@ namespace HellTakerAni
                     Tag = i
                 };
 
-                if (i == 2)
+                if (i == 3)
                 {
                     characterItem.Click += (sender, e) =>
                     {
@@ -123,7 +121,7 @@ namespace HellTakerAni
 
                         Default.Save();
 
-                        CreateAnimationList($"{item.Header}"[..8]);
+                        CreateAnimationList(((string)item.Header)[..8]);
                         SetAniBoxes(3);
                         ChangeCheckCharacterSelect(id);
                     };
@@ -177,6 +175,7 @@ namespace HellTakerAni
             {
                 (sender as MenuItem).IsChecked = Topmost = !Topmost;
             };
+            MainContextMenu_ToggleTopmost.IsChecked = Topmost = true;
 
 
             // Remove Menu
@@ -256,7 +255,7 @@ namespace HellTakerAni
 
         private void ChangeNextFrame(object sender, EventArgs e)
         {
-            frameCount = (characterIndex == 3) || (characterIndex == 4) ? mainFrameCount : mainFrameCount % 12;
+            frameCount = (characterIndex == 4) || (characterIndex == 5) ? mainFrameCount : mainFrameCount % 12;
 
             for (int i = 0; i < aniBoxCount; ++i)
             {

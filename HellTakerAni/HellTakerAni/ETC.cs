@@ -10,7 +10,7 @@ namespace HellTakerAni
 
         internal static MusicState mState = MusicState.Stop;
 
-        internal static readonly string appVersion = "v2.1";
+        internal static readonly string appVersion = "v2.2";
 
         internal static readonly string startupPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
 
